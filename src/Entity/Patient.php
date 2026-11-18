@@ -109,7 +109,7 @@ class Patient
     public function getId(): ?int { return $this->id; }
 
     public function getNumeroDossier(): ?string { return $this->numeroDossier; }
-    public function setNumeroDossier(?string $numeroDossier): static { $this->numeroDossier = $numeroDossier; return $this; }
+    public function setNumeroDossier(?string $numeroDossier): static { $this->numeroDossier = $numeroDossier ?: ('DOS-' . strtoupper(substr(uniqid(), -6))); return $this; }
 
     public function getNom(): ?string { return $this->nom; }
     public function setNom(string $nom): static { $this->nom = $nom; return $this; }

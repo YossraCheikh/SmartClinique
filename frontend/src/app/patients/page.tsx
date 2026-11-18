@@ -125,7 +125,8 @@ function PatientsContent() {
         await api.createPatient(payload);
       }
       setModalOpen(false);
-      fetchPatients();
+      setSearch('');
+      await fetchPatients();
     } catch (err: any) {
       setError(err.message || 'Une erreur est survenue lors de l\'enregistrement.');
     } finally {

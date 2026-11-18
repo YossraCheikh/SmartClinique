@@ -152,7 +152,9 @@ function MedecinsContent() {
         });
       }
       setModalOpen(false);
-      fetchMedecins();
+      setSearch('');
+      setSelectedSpecialite('all');
+      await fetchMedecins();
     } catch (err: any) {
       setError(err.message || 'Erreur lors de l\'enregistrement.');
     } finally {
@@ -173,10 +175,14 @@ function MedecinsContent() {
   };
 
   const filteredMedecins = medecins.filter((m) => {
+    const nom = (m.nom || '').toLowerCase();
+    const prenom = (m.prenom || '').toLowerCase();
+    const spec = (m.specialite || '').toLowerCase();
+    const q = (search || '').toLowerCase();
     const matchesSearch =
-      m.nom.toLowerCase().includes(search.toLowerCase()) ||
-      m.prenom.toLowerCase().includes(search.toLowerCase()) ||
-      m.specialite.toLowerCase().includes(search.toLowerCase());
+      nom.includes(q) ||
+      prenom.includes(q) ||
+      spec.includes(q);
     const matchesSpec = selectedSpecialite === 'all' || m.specialite === selectedSpecialite;
     return matchesSearch && matchesSpec;
   });

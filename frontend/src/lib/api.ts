@@ -167,7 +167,8 @@ export const api = {
 
   async updatePatient(id: number, patient: Partial<Patient>): Promise<Patient> {
     return request<Patient>(`/api/patients/${id}`, {
-      method: 'PUT',
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/merge-patch+json' },
       body: JSON.stringify(patient),
     });
   },
@@ -197,7 +198,8 @@ export const api = {
 
   async updateMedecin(id: number, medecin: Partial<Medecin>): Promise<Medecin> {
     return request<Medecin>(`/api/medecins/${id}`, {
-      method: 'PUT',
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/merge-patch+json' },
       body: JSON.stringify(medecin),
     });
   },
@@ -254,7 +256,8 @@ export const api = {
     }
   ): Promise<RendezVous> {
     return request<RendezVous>(`/api/rendez-vous/${id}`, {
-      method: 'PUT',
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/merge-patch+json' },
       body: JSON.stringify(data),
     });
   },
@@ -297,7 +300,8 @@ export const api = {
     }
   ): Promise<Ordonnance> {
     return request<Ordonnance>(`/api/ordonnances/${id}`, {
-      method: 'PUT',
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/merge-patch+json' },
       body: JSON.stringify(data),
     });
   },
@@ -416,7 +420,8 @@ export const api = {
 
   async updateConsultation(id: number, data: Partial<import('@/types').Consultation>): Promise<import('@/types').Consultation> {
     return request<import('@/types').Consultation>(`/api/consultations/${id}`, {
-      method: 'PUT',
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/merge-patch+json' },
       body: JSON.stringify(data),
     });
   },
@@ -447,7 +452,8 @@ export const api = {
 
   async updateFacture(id: number, data: Partial<import('@/types').Facture>): Promise<import('@/types').Facture> {
     return request<import('@/types').Facture>(`/api/factures/${id}`, {
-      method: 'PUT',
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/merge-patch+json' },
       body: JSON.stringify(data),
     });
   },

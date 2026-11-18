@@ -32,7 +32,7 @@ interface AppLayoutProps {
 }
 
 export default function AppLayout({ children }: AppLayoutProps) {
-  const { user, loading, isAuthenticated, logout, isAdmin, isMedecin, isSecretaire, isStaff, isPatient, isRealAdmin, roleOverride, setRoleOverride } = useAuth();
+  const { user, loading, isAuthenticated, logout, isAdmin, isMedecin, isSecretaire, isStaff, isPatient } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
 
@@ -223,19 +223,22 @@ export default function AppLayout({ children }: AppLayoutProps) {
         position: 'sticky',
         top: 0,
         height: '100vh',
+        maxHeight: '100vh',
+        overflow: 'hidden',
         zIndex: 50,
       }}>
         {/* Brand */}
         <div style={{
-          padding: '1.75rem 1.5rem',
+          padding: '1.4rem 1.25rem',
           display: 'flex',
           alignItems: 'center',
           gap: '0.85rem',
           borderBottom: '1px solid var(--border-color)',
+          flexShrink: 0,
         }}>
           <div style={{
-            width: '44px',
-            height: '44px',
+            width: '42px',
+            height: '42px',
             borderRadius: '12px',
             background: 'var(--primary-gradient)',
             display: 'flex',
@@ -243,27 +246,39 @@ export default function AppLayout({ children }: AppLayoutProps) {
             justifyContent: 'center',
             color: 'white',
             boxShadow: '0 4px 16px var(--primary-glow)',
+            flexShrink: 0,
           }}>
-            <Stethoscope size={24} />
+            <Stethoscope size={22} />
           </div>
           <div>
-            <h2 style={{ fontSize: '1.2rem', fontWeight: 800, letterSpacing: '-0.02em' }}>
+            <h2 style={{ fontSize: '1.15rem', fontWeight: 800, letterSpacing: '-0.02em' }}>
               Clinique <span className="gradient-text">Santé+</span>
             </h2>
-            <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+            <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
               Gestion Médicale & IA
             </p>
           </div>
         </div>
 
         {/* Navigation */}
-        <nav style={{ padding: '1.5rem 1rem', flex: 1, display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+        <nav
+          className="sidebar-nav"
+          style={{
+            padding: '1rem 0.75rem',
+            flex: 1,
+            minHeight: 0,
+            overflowY: 'auto',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.25rem',
+          }}
+        >
           <div style={{
-            fontSize: '0.72rem',
+            fontSize: '0.7rem',
             fontWeight: 700,
             textTransform: 'uppercase',
             color: 'var(--text-dim)',
-            padding: '0 0.75rem 0.5rem',
+            padding: '0 0.75rem 0.35rem',
             letterSpacing: '0.06em',
           }}>
             Menu Principal
@@ -278,22 +293,22 @@ export default function AppLayout({ children }: AppLayoutProps) {
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '0.85rem',
-                  padding: '0.75rem 1rem',
+                  gap: '0.75rem',
+                  padding: '0.65rem 0.85rem',
                   borderRadius: 'var(--radius-sm)',
                   color: isActive ? '#fff' : 'var(--text-muted)',
                   background: isActive ? 'rgba(2, 132, 199, 0.18)' : 'transparent',
                   border: isActive ? '1px solid rgba(56, 189, 248, 0.35)' : '1px solid transparent',
                   fontWeight: isActive ? 600 : 500,
-                  fontSize: '0.92rem',
+                  fontSize: '0.88rem',
                   textDecoration: 'none',
                   transition: 'all var(--transition-fast)',
                 }}
               >
-                <Icon size={19} color={isActive ? 'var(--primary-light)' : 'var(--text-muted)'} />
+                <Icon size={18} color={isActive ? 'var(--primary-light)' : 'var(--text-muted)'} />
                 <span style={{ flex: 1 }}>{item.label}</span>
                 {item.badge && (
-                  <span className="badge badge-sky" style={{ fontSize: '0.65rem', padding: '0.15rem 0.45rem' }}>
+                  <span className="badge badge-sky" style={{ fontSize: '0.62rem', padding: '0.12rem 0.4rem' }}>
                     {item.badge}
                   </span>
                 )}
@@ -304,20 +319,22 @@ export default function AppLayout({ children }: AppLayoutProps) {
 
         {/* User Card & Logout */}
         <div style={{
-          padding: '1.25rem',
+          padding: '1rem 1.15rem',
           borderTop: '1px solid var(--border-color)',
-          background: 'rgba(0, 0, 0, 0.2)',
+          background: 'rgba(0, 0, 0, 0.25)',
+          flexShrink: 0,
+          marginTop: 'auto',
         }}>
           <div style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            marginBottom: '0.85rem',
+            marginBottom: '0.75rem',
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', overflow: 'hidden' }}>
               <div style={{
-                width: '38px',
-                height: '38px',
+                width: '36px',
+                height: '36px',
                 borderRadius: '50%',
                 background: 'linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%)',
                 display: 'flex',
@@ -325,13 +342,14 @@ export default function AppLayout({ children }: AppLayoutProps) {
                 justifyContent: 'center',
                 color: 'white',
                 fontWeight: 700,
-                fontSize: '0.9rem',
+                fontSize: '0.85rem',
+                flexShrink: 0,
               }}>
                 {user?.prenom?.[0] || 'U'}
               </div>
-              <div style={{ overflow: 'hidden' }}>
+              <div style={{ overflow: 'hidden', minWidth: 0 }}>
                 <p style={{
-                  fontSize: '0.88rem',
+                  fontSize: '0.85rem',
                   fontWeight: 600,
                   whiteSpace: 'nowrap',
                   textOverflow: 'ellipsis',
@@ -349,7 +367,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
                       ? 'badge-emerald'
                       : 'badge-sky'
                   }`}
-                  style={{ fontSize: '0.65rem' }}
+                  style={{ fontSize: '0.62rem', padding: '0.15rem 0.45rem' }}
                 >
                   <Shield size={10} />
                   {isAdmin
@@ -367,9 +385,9 @@ export default function AppLayout({ children }: AppLayoutProps) {
           <button
             onClick={logout}
             className="btn btn-secondary"
-            style={{ width: '100%', fontSize: '0.85rem', padding: '0.55rem' }}
+            style={{ width: '100%', fontSize: '0.82rem', padding: '0.5rem' }}
           >
-            <LogOut size={16} />
+            <LogOut size={15} />
             Déconnexion
           </button>
         </div>
@@ -653,77 +671,6 @@ export default function AppLayout({ children }: AppLayoutProps) {
 
           {/* Right Header items */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
-            {/* Quick Role View Switcher for Testing (instant role simulation) */}
-            {isRealAdmin && (
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.25rem',
-                background: 'rgba(255, 255, 255, 0.05)',
-                border: '1px solid var(--border-color)',
-                padding: '0.25rem 0.4rem',
-                borderRadius: 'var(--radius-full)',
-              }}>
-                <span style={{ fontSize: '0.72rem', color: 'var(--text-dim)', padding: '0 0.4rem', fontWeight: 600 }}>
-                  Vue Rôle :
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setRoleOverride('admin')}
-                  style={{
-                    border: 'none',
-                    cursor: 'pointer',
-                    fontSize: '0.75rem',
-                    fontWeight: 600,
-                    padding: '0.3rem 0.65rem',
-                    borderRadius: 'var(--radius-full)',
-                    background: roleOverride === 'admin' || roleOverride === 'auto' ? 'rgba(168, 85, 247, 0.25)' : 'transparent',
-                    color: roleOverride === 'admin' || roleOverride === 'auto' ? '#c084fc' : 'var(--text-muted)',
-                    transition: 'all var(--transition-fast)',
-                  }}
-                  title="Vue Administrateur complète (tous les menus)"
-                >
-                  Admin (Tout)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setRoleOverride('medecin')}
-                  style={{
-                    border: 'none',
-                    cursor: 'pointer',
-                    fontSize: '0.75rem',
-                    fontWeight: 600,
-                    padding: '0.3rem 0.65rem',
-                    borderRadius: 'var(--radius-full)',
-                    background: roleOverride === 'medecin' ? 'rgba(56, 189, 248, 0.25)' : 'transparent',
-                    color: roleOverride === 'medecin' ? '#38bdf8' : 'var(--text-muted)',
-                    transition: 'all var(--transition-fast)',
-                  }}
-                  title="Vue Médecin : Masque Salle d'attente et Facturation, Rendez-vous en lecture seule"
-                >
-                  🩺 Médecin
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setRoleOverride('secretaire')}
-                  style={{
-                    border: 'none',
-                    cursor: 'pointer',
-                    fontSize: '0.75rem',
-                    fontWeight: 600,
-                    padding: '0.3rem 0.65rem',
-                    borderRadius: 'var(--radius-full)',
-                    background: roleOverride === 'secretaire' ? 'rgba(16, 185, 129, 0.25)' : 'transparent',
-                    color: roleOverride === 'secretaire' ? '#34d399' : 'var(--text-muted)',
-                    transition: 'all var(--transition-fast)',
-                  }}
-                  title="Vue Secrétaire : Masque Consultations et Ordonnances"
-                >
-                  🗂️ Secrétaire
-                </button>
-              </div>
-            )}
-
             <Link href="/chat" className="btn btn-primary" style={{ padding: '0.5rem 1rem', fontSize: '0.82rem' }}>
               <Bot size={16} />
               Assistant IA

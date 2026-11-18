@@ -84,7 +84,7 @@ class Medecin
     /**
      * @var Collection<int, Disponibilite>
      */
-    #[ORM\OneToMany(targetEntity: Disponibilite::class, mappedBy: 'medecin', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Disponibilite::class, mappedBy: 'medecin', orphanRemoval: true, cascade: ['persist', 'remove'])]
     #[Groups(['medecin:read'])]
     private Collection $disponibilites;
 
@@ -92,6 +92,28 @@ class Medecin
     {
         $this->rendezVous = new ArrayCollection();
         $this->disponibilites = new ArrayCollection();
+        $this->initDefaultDisponibilites();
+    }
+
+    public function initDefaultDisponibilites(): void
+    {
+        if (!$this->disponibilites->isEmpty()) {
+            return;
+        }
+        $jours = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'];
+        foreach ($jours as $j) {
+            $dispMatin = new Disponibilite();
+            $dispMatin->setJourSemaine($j);
+            $dispMatin->setHeureDebut(new \DateTime('08:30:00'));
+            $dispMatin->setHeureFin(new \DateTime('12:30:00'));
+            $this->addDisponibilite($dispMatin);
+
+            $dispAprem = new Disponibilite();
+            $dispAprem->setJourSemaine($j);
+            $dispAprem->setHeureDebut(new \DateTime('14:00:00'));
+            $dispAprem->setHeureFin(new \DateTime('18:00:00'));
+            $this->addDisponibilite($dispAprem);
+        }
     }
 
     public function getId(): ?int { return $this->id; }
