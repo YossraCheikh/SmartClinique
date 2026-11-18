@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Confirmation de votre rendez-vous</title>
+</head>
+<body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+    <div style="max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 5px;">
+        <h2 style="color: #4e73df;">Confirmation de Rendez-vous</h2>
+        
+        <p>Bonjour {{ rendez_vous.patient.prenom }} {{ rendez_vous.patient.nom }},</p>
+        
+        <p>Nous vous confirmons que votre rendez-vous a bien été enregistré. Voici les détails :</p>
+        
+        <ul style="list-style-type: none; padding-left: 0; background-color: #f8f9fc; padding: 15px; border-radius: 5px;">
+            <li><strong>Date :</strong> {{ rendez_vous.date|date('d/m/Y') }}</li>
+            <li><strong>Heure :</strong> {{ rendez_vous.heure|date('H:i') }}</li>
+            <li><strong>Médecin :</strong> Dr. {{ rendez_vous.medecin.prenom }} {{ rendez_vous.medecin.nom }} ({{ rendez_vous.medecin.specialite }})</li>
+            <li><strong>Motif :</strong> {{ rendez_vous.motif }}</li>
+        </ul>
+        
+        <p>Si vous devez modifier ou annuler ce rendez-vous, merci de nous contacter dans les plus brefs délais.</p>
+
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+        
+        <p style="font-size: 0.9em; color: #888;">
+            Cordialement,<br>
+            L'équipe de la Clinique
+        </p>
+    </div>
+</body>
+</html>

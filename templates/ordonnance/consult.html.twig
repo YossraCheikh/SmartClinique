@@ -1,0 +1,106 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails Ordonnance{% endblock %}
+
+{% block body %}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800"><i class="fas fa-file-prescription mr-2"></i>Détails de l'Ordonnance</h1>
+    <a href="{{ path('app_ordonnance_index') }}" class="btn btn-secondary btn-sm">
+        <i class="fas fa-arrow-left mr-1"></i> Retour à la liste
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Ordonnance #{{ ordonnance.id }}</h6>
+                <button onclick="window.print()" class="btn btn-sm btn-info shadow-sm d-none d-sm-inline-block">
+                    <i class="fas fa-print fa-sm mr-1"></i> Imprimer
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <h3 class="font-weight-bold">CLINIQUE MÉDICALE</h3>
+                    <p class="text-muted">Ordonnance</p>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-sm-6">
+                        <strong>Médecin :</strong><br>
+                        Dr. {{ ordonnance.rendezVous.medecin.nom }} {{ ordonnance.rendezVous.medecin.prenom }}<br>
+                        Spécialité : {{ ordonnance.rendezVous.medecin.specialite }}
+                    </div>
+                    <div class="col-sm-6 text-right">
+                        <strong>Date :</strong> {{ ordonnance.date|date('d/m/Y') }}<br>
+                        <strong>Patient :</strong><br>
+                        {{ ordonnance.rendezVous.patient.nom }} {{ ordonnance.rendezVous.patient.prenom }}<br>
+                        Âge : {{ ordonnance.rendezVous.patient.age }} ans
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="py-4 min-vh-25">
+                    <h5 class="font-weight-bold mb-3"><i class="fas fa-pills mr-2 text-primary"></i>Prescription :</h5>
+                    <div class="pl-3" style="font-size: 1.1rem; line-height: 1.8;">
+                        {{ ordonnance.medicaments|nl2br }}
+                    </div>
+                </div>
+
+                {% if ordonnance.description %}
+                <hr>
+                <div class="py-2">
+                    <h6 class="font-weight-bold">Notes / Description :</h6>
+                    <p class="text-muted">{{ ordonnance.description|nl2br }}</p>
+                </div>
+                {% endif %}
+
+                <div class="row mt-5 pt-5">
+                    <div class="col-12 text-right pr-5">
+                        <p class="mb-5">Signature</p>
+                        <p>_______________________</p>
+                    </div>
+                </div>
+
+                <div class="d-print-none mt-4 border-top pt-3">
+                    <a href="{{ path('app_ordonnance_edit', {'id': ordonnance.id}) }}" class="btn btn-warning">
+                        <i class="fas fa-edit mr-1"></i> Modifier
+                    </a>
+                    <form method="post" action="{{ path('app_ordonnance_supp', {'id': ordonnance.id}) }}" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette ordonnance ?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ ordonnance.id) }}">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash mr-1"></i> Supprimer
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4 d-print-none">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-info">Rendez-vous associé</h6>
+            </div>
+            <div class="card-body">
+                <p><strong>Date:</strong> {{ ordonnance.rendezVous.date|date('d/m/Y') }} à {{ ordonnance.rendezVous.heure|date('H:i') }}</p>
+                <p><strong>Motif:</strong> {{ ordonnance.rendezVous.motif }}</p>
+                <p>
+                    <strong>Statut:</strong>
+                    {% if ordonnance.rendezVous.statut == 'Confirmé' %}
+                        <span class="badge badge-success">{{ ordonnance.rendezVous.statut }}</span>
+                    {% elseif ordonnance.rendezVous.statut == 'En attente' %}
+                        <span class="badge badge-warning">{{ ordonnance.rendezVous.statut }}</span>
+                    {% else %}
+                        <span class="badge badge-info">{{ ordonnance.rendezVous.statut }}</span>
+                    {% endif %}
+                </p>
+                <a href="{{ path('app_rendez_vous_consult', {'id': ordonnance.rendezVous.id}) }}" class="btn btn-primary btn-sm btn-block">
+                    <i class="fas fa-calendar mr-1"></i> Voir le rendez-vous
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,107 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails Rendez-vous{% endblock %}
+
+{% block body %}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800"><i class="fas fa-calendar-check mr-2"></i>Détails du Rendez-vous</h1>
+    <a href="{{ path('app_rendez_vous_index') }}" class="btn btn-secondary btn-sm">
+        <i class="fas fa-arrow-left mr-1"></i> Retour à la liste
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Informations du rendez-vous</h6>
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless">
+                    <tr>
+                        <th class="text-gray-600" width="30%"><i class="fas fa-hashtag mr-2"></i>ID</th>
+                        <td>{{ rendez_vous.id }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-gray-600"><i class="fas fa-calendar mr-2"></i>Date</th>
+                        <td>{{ rendez_vous.date|date('d/m/Y') }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-gray-600"><i class="fas fa-clock mr-2"></i>Heure</th>
+                        <td>{{ rendez_vous.heure|date('H:i') }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-gray-600"><i class="fas fa-user mr-2"></i>Patient</th>
+                        <td>
+                            <a href="{{ path('app_patient_consult', {'id': rendez_vous.patient.id}) }}">
+                                {{ rendez_vous.patient }}
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="text-gray-600"><i class="fas fa-user-md mr-2"></i>Médecin</th>
+                        <td>
+                            <a href="{{ path('app_medecin_consult', {'id': rendez_vous.medecin.id}) }}">
+                                {{ rendez_vous.medecin }}
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="text-gray-600"><i class="fas fa-comment-medical mr-2"></i>Motif</th>
+                        <td>{{ rendez_vous.motif }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-gray-600"><i class="fas fa-info-circle mr-2"></i>Statut</th>
+                        <td>
+                            {% if rendez_vous.statut == 'Confirmé' %}
+                                <span class="badge badge-success badge-pill px-3 py-2">{{ rendez_vous.statut }}</span>
+                            {% elseif rendez_vous.statut == 'En attente' %}
+                                <span class="badge badge-warning badge-pill px-3 py-2">{{ rendez_vous.statut }}</span>
+                            {% elseif rendez_vous.statut == 'Annulé' %}
+                                <span class="badge badge-danger badge-pill px-3 py-2">{{ rendez_vous.statut }}</span>
+                            {% else %}
+                                <span class="badge badge-info badge-pill px-3 py-2">{{ rendez_vous.statut }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+                <hr>
+                <a href="{{ path('app_rendez_vous_edit', {'id': rendez_vous.id}) }}" class="btn btn-warning">
+                    <i class="fas fa-edit mr-1"></i> Modifier
+                </a>
+                <form method="post" action="{{ path('app_rendez_vous_supp', {'id': rendez_vous.id}) }}" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce rendez-vous ?');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ rendez_vous.id) }}">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash mr-1"></i> Supprimer
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-success">Ordonnance associée</h6>
+            </div>
+            <div class="card-body">
+                {% if rendez_vous.ordonnance %}
+                    <p><strong>Date:</strong> {{ rendez_vous.ordonnance.date|date('d/m/Y') }}</p>
+                    <p><strong>Médicaments:</strong><br>{{ rendez_vous.ordonnance.medicaments|nl2br }}</p>
+                    {% if rendez_vous.ordonnance.description %}
+                        <p><strong>Description:</strong><br>{{ rendez_vous.ordonnance.description|nl2br }}</p>
+                    {% endif %}
+                    <a href="{{ path('app_ordonnance_consult', {'id': rendez_vous.ordonnance.id}) }}" class="btn btn-info btn-sm btn-block">
+                        <i class="fas fa-eye mr-1"></i> Voir l'ordonnance
+                    </a>
+                {% else %}
+                    <p class="text-center text-gray-500 mb-3">Aucune ordonnance associée</p>
+                    <a href="{{ path('app_ordonnance_new') }}" class="btn btn-success btn-sm btn-block">
+                        <i class="fas fa-plus mr-1"></i> Créer une ordonnance
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

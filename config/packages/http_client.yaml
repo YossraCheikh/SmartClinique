@@ -1,0 +1,8 @@
+framework:
+    http_client:
+        # Force cURL transport (required on Windows with XAMPP)
+        default_options:
+            timeout: 30
+            max_duration: 60
+            verify_peer: true
+            verify_host: true

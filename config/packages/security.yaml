@@ -1,0 +1,106 @@
+security:
+    # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
+    password_hashers:
+        App\Entity\User:
+            id: App\Security\FlexiblePasswordHasher
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+    role_hierarchy:
+        ROLE_ADMIN: [ROLE_SECRETAIRE, ROLE_MEDECIN]
+    # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
+    providers:
+        app_user_provider:
+            entity:
+                class: App\Entity\User
+                property: email
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        login:
+            pattern: ^/api/login_check
+            stateless: true
+            json_login:
+                check_path: /api/login_check
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+                username_path: email
+                password_path: password
+        api:
+            pattern: ^/api
+            stateless: true
+            jwt: ~
+        main:
+            lazy: true
+            provider: app_user_provider
+            form_login:
+                login_path: app_login
+                check_path: app_login
+                enable_csrf: true
+                default_target_path: app_dashboard
+            logout:
+                path: app_logout
+                target: app_login
+
+    access_control:
+        # ─── Accès PUBLIC ───────────────────────────────────────────────
+        - { path: ^/api/login_check, roles: PUBLIC_ACCESS }
+        - { path: ^/api/register, roles: PUBLIC_ACCESS }
+        - { path: ^/api/docs, roles: PUBLIC_ACCESS }
+        - { path: ^/api/chat, roles: PUBLIC_ACCESS }
+        - { path: ^/uploads, roles: PUBLIC_ACCESS }
+        # Liste des médecins accessible publiquement (page d'accueil)
+        - { path: ^/api/medecins$, roles: PUBLIC_ACCESS, methods: [GET] }
+
+        # ─── Accès PATIENT (connecté, données propres) ──────────────────
+        - { path: ^/api/patient, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/api/me, roles: IS_AUTHENTICATED_FULLY }
+
+        # Smart : créneaux/suggestion → patients + staff
+        - { path: ^/api/smart/creneaux-disponibles, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/api/smart/suggestion-prochain-creneau, roles: IS_AUTHENTICATED_FULLY }
+
+        # ─── Salle d'attente (Secrétariat & Admin uniquement, Médecin bloqué) ──────
+        - { path: ^/api/smart/salle-attente, roles: ROLE_SECRETAIRE }
+
+        # ─── Rendez-vous : Consultation pour médecin + secrétaire, Modification/Suppression uniquement Secrétaire ───
+        - { path: ^/api/rendez-vous, methods: [GET], roles: [ROLE_SECRETAIRE, ROLE_MEDECIN] }
+        - { path: ^/api/rendez-vous, methods: [POST, PUT, PATCH, DELETE], roles: ROLE_SECRETAIRE }
+
+        # ─── Factures : Secrétariat & Admin uniquement (Médecin bloqué) ───
+        - { path: ^/api/factures, roles: ROLE_SECRETAIRE }
+
+        # ─── Accès STAFF PARTAGÉ (secrétaire ET médecin) ────────────────
+        - { path: ^/api/dashboard, roles: [ROLE_SECRETAIRE, ROLE_MEDECIN] }
+        - { path: ^/api/smart/statistiques-avancees, roles: [ROLE_SECRETAIRE, ROLE_MEDECIN] }
+        - { path: ^/api/smart, roles: [ROLE_SECRETAIRE, ROLE_MEDECIN] }
+        - { path: ^/api/patients, roles: [ROLE_SECRETAIRE, ROLE_MEDECIN] }
+        - { path: ^/api/medecins, roles: [ROLE_SECRETAIRE, ROLE_MEDECIN] }
+        - { path: ^/api/chirurgies, roles: [ROLE_SECRETAIRE, ROLE_MEDECIN] }
+
+        # ─── Accès MÉDECIN uniquement (actes médicaux - Secrétaire bloquée) ──────────────
+        - { path: ^/api/consultations, roles: ROLE_MEDECIN }
+        - { path: ^/api/ordonnances, roles: ROLE_MEDECIN }
+
+        # ─── Tout autre endpoint API → authentifié ──────────────────────
+        - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
+
+        # ─── Routes Twig héritées ────────────────────────────────────────
+        - { path: ^/login, roles: PUBLIC_ACCESS }
+        - { path: ^/medecin/new, roles: ROLE_ADMIN }
+        - { path: ^/medecin/.+/edit, roles: ROLE_ADMIN }
+        - { path: ^/medecin/.+/supp, roles: ROLE_ADMIN }
+        - { path: ^/ordonnance, roles: ROLE_ADMIN }
+        - { path: ^/, roles: ROLE_SECRETAIRE }
+
+when@test:
+    security:
+        password_hashers:
+            # By default, password hashers are resource intensive and take time. This is
+            # important to generate secure password hashes. In tests however, secure hashes
+            # are not important, waste resources and increase test times. The following
+            # reduces the work factor to the lowest possible values.
+            Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
+                algorithm: auto
+                cost: 4 # Lowest possible value for bcrypt
+                time_cost: 3 # Lowest possible value for argon
+                memory_cost: 10 # Lowest possible value for argon
